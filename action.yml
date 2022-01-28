@@ -1,0 +1,49 @@
+name: 'terminate ec2 instance'
+description: >
+  teminate on demande ec2 instance as github runner
+  following permissions are required
+    permissions:
+      id-token: write
+      contents: read
+inputs:
+  config-path:
+    description: >-
+      path to the ec2.yml file which stores the parameters for the instance creation
+    required: true
+  label:
+    description: >-
+      Name of the unique label assigned to the runner.
+      The label is used in two cases:
+      - to use as the input of 'runs-on' property for the following jobs;
+      - to remove the runner from GitHub when it is not needed anymore.
+    required: true
+  ec2-instance-id:
+    description: >-
+      EC2 Instance Id of the created runner.
+      The id is used to terminate the EC2 instance when the runner is not needed anymore.
+    required: true
+  github-token:
+    description: >-
+      GitHub personal access token
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: load variables
+      id: load-vars
+      uses: myriad-actions/load-variables@v1
+      with:
+        config-path: ${{ inputs.config-path }}
+    - name: Configure AWS credentials 
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ fromJson(steps.load-vars.outputs.vars).role-to-assume }}
+        aws-region: ${{ fromJson(steps.load-vars.outputs.vars).aws-region }}
+    - name: Stop EC2 runner
+      uses: machulav/ec2-github-runner@v2
+      with:
+        mode: stop
+        github-token: ${{ inputs.github-token }}
+        label: ${{ inputs.label }}
+        ec2-instance-id: ${{ inputs.ec2-instance-id }}
