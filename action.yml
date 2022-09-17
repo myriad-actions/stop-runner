@@ -6,7 +6,7 @@ description: >
       id-token: write
       contents: read
 secrets:
-  github-token:
+  github-pat:
     description: >-
       GitHub personal access token
     required: true
@@ -37,6 +37,6 @@ runs:
       uses: machulav/ec2-github-runner@v2
       with:
         mode: stop
-        github-token: ${{ secrets.github-token }}
+        github-token: ${{ secrets.github-pat }}
         label: ${{ inputs.label }}
         ec2-instance-id: ${{ inputs.ec2-instance-id }}
