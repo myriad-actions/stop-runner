@@ -11,10 +11,6 @@ secrets:
       GitHub personal access token
     required: true
 inputs:
-  config-path:
-    description: >-
-      path to the ec2.yml file which stores the parameters for the instance creation
-    required: true
   label:
     description: >-
       Name of the unique label assigned to the runner.
