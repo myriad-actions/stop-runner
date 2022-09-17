@@ -35,6 +35,6 @@ runs:
       uses: machulav/ec2-github-runner@v2
       with:
         mode: stop
-        github-token: ${{ input.github-pat }}
+        github-token: ${{ inputs.github-pat }}
         label: ${{ inputs.label }}
         ec2-instance-id: ${{ inputs.ec2-instance-id }}
