@@ -5,6 +5,11 @@ description: >
     permissions:
       id-token: write
       contents: read
+secrets:
+  github-token:
+    description: >-
+      GitHub personal access token
+    required: true
 inputs:
   config-path:
     description: >-
@@ -22,28 +27,22 @@ inputs:
       EC2 Instance Id of the created runner.
       The id is used to terminate the EC2 instance when the runner is not needed anymore.
     required: true
-  github-token:
-    description: >-
-      GitHub personal access token
-    required: true
+
 
 runs:
   using: "composite"
   steps:
-    - name: load variables
-      id: load-vars
-      uses: myriad-actions/load-variables@v1
-      with:
-        config-path: ${{ inputs.config-path }}
+      - name: init job  
+        uses: myriad-actions/init-job@main
     - name: Configure AWS credentials 
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: ${{ fromJson(steps.load-vars.outputs.vars).role-to-assume }}
-        aws-region: ${{ fromJson(steps.load-vars.outputs.vars).aws-region }}
+        role-to-assume: ${{ env.AWS-ROLE-TO-ASSUME }}
+        aws-region: ${{ env.AWS-REGION }}
     - name: Stop EC2 runner
       uses: machulav/ec2-github-runner@v2
       with:
         mode: stop
-        github-token: ${{ inputs.github-token }}
+        github-token: ${{ secrets.github-token }}
         label: ${{ inputs.label }}
         ec2-instance-id: ${{ inputs.ec2-instance-id }}
