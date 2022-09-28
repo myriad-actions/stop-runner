@@ -40,6 +40,7 @@ runs:
       with:
         role-to-assume: ${{ fromJson(steps.load-vars.outputs.vars).role-to-assume }}
         aws-region: ${{ fromJson(steps.load-vars.outputs.vars).aws-region }}
+    - run: sleep 20
     - name: Stop EC2 runner
       uses: machulav/ec2-github-runner@v2
       with:
